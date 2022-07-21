@@ -1,3 +1,7 @@
+from ctypes import Union
+from typing import Dict, List, Tuple, Type
+
+
 class InfoMessage:
 
     def __init__(self,
@@ -6,11 +10,11 @@ class InfoMessage:
                  distance: float,
                  speed: float,
                  calories: float) -> None:
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+        self.training_type: str = training_type
+        self.duration: float = duration
+        self.distance: float = distance
+        self.speed: float = speed
+        self.calories: float = calories
 
     def get_message(self) -> str:
         """Информационное сообщение о тренировке."""
@@ -32,9 +36,9 @@ class Training:
                  duration: float,
                  weight: float,
                  ) -> None:
-        self.action = action
-        self.duration = duration
-        self.weight = weight
+        self.action: int = action
+        self.duration: float = duration
+        self.weight: float = weight
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -59,8 +63,8 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-    coeff_calorie_1 = 18
-    coeff_calorie_2 = 20
+    coeff_calorie_1: int = 18
+    coeff_calorie_2: int = 20
 
     def get_spent_calories(self) -> float:
         return ((self.coeff_calorie_1 * self.get_mean_speed()
@@ -80,7 +84,7 @@ class SportsWalking(Training):
                  weight: float,
                  height: int) -> None:
         super().__init__(action, duration, weight)
-        self.height = height
+        self.height: int = height
 
     def get_spent_calories(self) -> float:
         return ((self.coeff_calorie_1 * self.weight
@@ -116,12 +120,14 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    sports_type = {
+    sports_type: Dict[str, Type[Training]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking}
     if workout_type in sports_type:
         return sports_type[workout_type](*data)
+    else:
+        raise KeyError('Тип тренировки не найден')
 
 
 def main(training: Training) -> None:
@@ -131,7 +137,7 @@ def main(training: Training) -> None:
 
 
 if __name__ == '__main__':
-    packages = [
+    packages: Tuple[Union[str, List[int]]] = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
